@@ -1,7 +1,7 @@
 package com.student.friendship.service;
 
 import com.student.friendship.cache.FutureValueCache;
-import com.student.friendship.cache.SynchronizedFutureValueCache;
+import com.student.friendship.cache.FutureValueCacheFactory;
 import com.student.friendship.pojo.User;
 import com.student.friendship.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,14 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private final UserRepository userRepository;
+    @Autowired
+    private final FutureValueCacheFactory<String, User> userCacheFactory;
     private final FutureValueCache<String, User> userCache;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, FutureValueCacheFactory<String, User> userCacheFactory) {
         this.userRepository = userRepository;
-        this.userCache = new SynchronizedFutureValueCache<>(cacheSize, username -> userRepository.getUser(username));
+        this.userCacheFactory = userCacheFactory;
+        this.userCache = userCacheFactory.createFutureValueCache(cacheSize, username -> userRepository.getUser(username));
     }
 
     @Override
