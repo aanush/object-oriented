@@ -24,7 +24,7 @@ public final class UserFactoryImpl implements UserFactory {
             if (username == null || username.isEmpty() || id < 0) {
                 throw new IllegalArgumentException();
             }
-            this.username = username;
+            this.username = username.toLowerCase();
             this.id = id;
         }
 
