@@ -9,12 +9,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 @Repository
 public class FriendRepositoryImpl implements FriendRepository {
 
-    private final ConcurrentMap<User, Set<Friend>> friendMap;
+    private final ConcurrentMap<User, ConcurrentMap<Friend, Friend>> friendMap;
 
     public FriendRepositoryImpl() {
         friendMap = new ConcurrentHashMap<>();
@@ -22,19 +21,19 @@ public class FriendRepositoryImpl implements FriendRepository {
 
     @Override
     public void addFriend(Friend friend) {
-        friendMap.putIfAbsent(friend.getUserOne(), new ConcurrentSkipListSet<>());
-        friendMap.putIfAbsent(friend.getUserTwo(), new ConcurrentSkipListSet<>());
-        friendMap.get(friend.getUserOne()).add(friend);
-        friendMap.get(friend.getUserTwo()).add(friend);
+        friendMap.putIfAbsent(friend.getUserOne(), new ConcurrentHashMap<>());
+        friendMap.putIfAbsent(friend.getUserTwo(), new ConcurrentHashMap<>());
+        friendMap.get(friend.getUserOne()).putIfAbsent(friend, friend);
+        friendMap.get(friend.getUserTwo()).putIfAbsent(friend, friend);
     }
 
     @Override
     public void removeFriend(Friend friend) {
-        Set<Friend> userOneFriendSet = friendMap.get(friend.getUserOne());
+        Set<Friend> userOneFriendSet = friendMap.get(friend.getUserOne()).keySet();
         if (userOneFriendSet != null) {
             userOneFriendSet.remove(friend);
         }
-        Set<Friend> userTwoFriendSet = friendMap.get(friend.getUserTwo());
+        Set<Friend> userTwoFriendSet = friendMap.get(friend.getUserTwo()).keySet();
         if (userTwoFriendSet != null) {
             userTwoFriendSet.remove(friend);
         }
@@ -42,7 +41,7 @@ public class FriendRepositoryImpl implements FriendRepository {
 
     @Override
     public List<Friend> getFriendList(User user) {
-        return new ArrayList<>(friendMap.get(user));
+        return new ArrayList<>(friendMap.get(user).keySet());
     }
 
 }

@@ -13,4 +13,8 @@ public interface FriendService {
 
     List<Friend> getFriendList(User user);
 
+    List<User> getFriendUserList(User user);
+
+    List<User> getMutualFriendUserList(User userOne, User userTwo);
+
 }
