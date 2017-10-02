@@ -4,6 +4,6 @@ import java.util.function.Function;
 
 public interface FutureValueCacheFactory<K, V> {
 
-    FutureValueCache<K, V> createFutureValueCache(int cacheSize, Function<K, V> cacheFunction);
+    FutureValueCache<K, V> createSynchronizedFutureValueCache(int cacheSize, Function<K, V> cacheFunction);
 
 }

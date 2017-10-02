@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository, FutureValueCacheFactory<String, User> userCacheFactory) {
         this.userRepository = userRepository;
         this.userCacheFactory = userCacheFactory;
-        this.userCache = userCacheFactory.createFutureValueCache(cacheSize, username -> userRepository.getUser(username));
+        this.userCache = userCacheFactory.createSynchronizedFutureValueCache(cacheSize, username -> userRepository.getUser(username));
     }
 
     @Override
